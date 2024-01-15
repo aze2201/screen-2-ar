@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Multiple Iframes</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    h2 {
+      margin: 20px 0;
+    }
+
+    iframe {
+      width: 80%; /* Adjust iframe width as needed */
+      height: 60vh; /* Adjust iframe height as needed */
+      border: none; /* Remove iframe border */
+      margin: 10px 0; /* Add some margin between iframes */
+    }
+
+    @media screen and (orientation: portrait) {
+      /* Adjust styles for portrait orientation if needed */
+    }
+
+    @media screen and (orientation: landscape) {
+      /* Adjust styles for landscape orientation if needed */
+    }
+  </style>
+
+  <script>
+    // https://open-rtc.com/viar.html?PeerDesktopID=6087bfd9-f052-4dcc-8ef1-32da8a1c11c6
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get PeerDesktopID from URL
+            const remotePeerId = getParameterByName('PeerDesktopID');
+
+            // Update iframe src with remotePeerId
+            if (remotePeerId) {
+                const iframe = document.getElementById('myIframe');
+                const currentSrc = iframe.getAttribute('src');
+                const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+                iframe.setAttribute('src', newSrc);
+                const iframeV = document.getElementById('myIframeV');
+                const currentSrcV = iframeV.getAttribute('src');
+                const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+                iframeV.setAttribute('src', newSrcV);
+            }
+        });
+    </script>
+
+</head>
+<body>
+  <h2>Two Iframes Loading the Same Page</h2>
+  <iframe id="myIframe" src="https://open-rtc.com/share-screen.html"></iframe>
+  <iframe id="myIframeV" src="https://open-rtc.com/share-screenV.html"></iframe>
+</body>
+</html>

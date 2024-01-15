@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Sharing Sender</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            background-color: #f5f5f5;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-top: 10px;
+        }
+
+        video {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        #startButton {
+            margin-top: 15px;
+            padding: 20px 30px;
+            font-size: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #qrcode {
+            margin-top: 20px;
+        }
+		
+		#changeable-element {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            transition: all 0.3s ease;
+        }
+
+        #size-controls {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        #size-controls label {
+            margin-right: 10px;
+        }
+    </style>
+
+    <!-- Include PeerJS library -->
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+</head>
+<body>
+    <h1>Screen Sharing Sender</h1>
+    <center><h2>This is your display ID. <br>Scan this QR code with your camera and connect to this display</h2></center>
+    <button id="startButton">Start Sharing Display</button>
+    <div id="qrcode"></div>
+	
+	<br>
+	
+	<center><h2>Adjust your Argumented Object<br> This size will effect on your mobile browser interface<br>(NOT WORKING FOR VR MODE YET)<h2></center>
+	<div id="changeable-element"></div>
+    <div id="size-controls">
+        <label for="widthInput">Width:</label>
+        <input type="range" id="widthInput" min="100" max="500" value="200" step="1">
+        <div class="progress-bar">
+            <div id="widthProgress" class="progress"></div>
+        </div>
+    </div>
+    <div id="size-controls">
+        <label for="heightInput">Height:</label>
+        <input type="range" id="heightInput" min="100" max="500" value="200" step="1">
+        <div class="progress-bar">
+            <div id="heightProgress" class="progress"></div>
+        </div>
+    </div>
+	
+	<div id="size-controls">
+        <label for="distanceInput">Distance:</label>
+        <input type="range" id="distanceInput" min="100" max="500" value="200" step="1">
+        <div class="progress-bar">
+            <div id="distanceProgress" class="progress"></div>
+        </div>
+    </div>
+
+
+	
+
+    <center><h2><br>Scan this QR for mobile VR mode</h2></center>
+    <div id="qrcodeV"></div>
+    <center id="myCenter"><h2>Link to VR mode<br></h2></center>
+	
+	<script>
+		// This is communication
+        const startButton = document.getElementById('startButton');
+        const localVideo = document.getElementById('localVideo');
+        let peer = null;
+        let localStream = null;
+        
+        // Initialize PeerJS
+                peer = new Peer();
+
+                // Print sender's PeerID to console
+                peer.on('open', peerId => {
+                    console.log('Sender PeerID:', peerId);
+                    
+                    const qrcodeDiv = document.getElementById('qrcode');
+                    const qrcodeDivV = document.getElementById('qrcodeV');
+
+                    const text = 'https://open-rtc.com/share-screen.html?PeerDesktopID='+peerId;
+
+                    const textV = 'https://open-rtc.com/viar.html?PeerDesktopID='+peerId;
+
+                    const linkElement = document.createElement('a');
+                    linkElement.href = `https://open-rtc.com/viar.html?PeerDesktopID=${peerId}`;
+                    const centerElement = document.getElementById('myCenter');
+                    linkElement.textContent = 'Link';
+                    centerElement.appendChild(linkElement);
+                    
+                    if (text) {
+                        // Clear existing QR code
+                        qrcodeDiv.innerHTML = '';
+                        qrcodeDivV.innerHTML = '';
+                        // Generate QR code
+                        const qrcode = new QRCode(qrcodeDiv, {
+                              text: text,
+                              width: 256,
+                              height: 256
+                         });
+                         const qrcodeV = new QRCode(qrcodeDivV, {
+                              text: textV,
+                              width: 256,
+                              height: 256
+                         });
+
+                    qrcodeDiv.style.display = 'block';
+                    qrcodeDivV.style.display = 'block';
+                    
+                     }
+                });
+				
+		// This is message exchange to adjust settings				
+		peer.on('connection', (conn) => {
+			connection = conn;
+			connection.on('data', (data) => {
+				console.log(data);
+				connection.send("2,2,4");
+			});
+		});
+                
+                
+
+        startButton.addEventListener('click', async () => {
+            try {
+
+                // Get user media for screen sharing
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+
+                // Display local stream
+                // localVideo.srcObject = stream;
+
+                // Call the specified target PeerID
+ 
+                // Answer incoming calls automatically
+                peer.on('call', incomingCall => {
+                    incomingCall.answer(stream);
+                });
+
+                // Set up error handling
+                peer.on('error', error => {
+                    console.error('PeerJS error:', error);
+                });
+
+                startButton.disabled = true;
+            } catch (error) {
+                console.error('Error starting screen sharing:', error);
+            }
+        });
+
+		// This is display
+        function changeSize() {
+            var width = document.getElementById("widthInput").value;
+            var height = document.getElementById("heightInput").value;
+			var distance = document.getElementById("distanceInput").value;
+
+            var element = document.getElementById("changeable-element");
+            element.style.width = width + "px";
+            element.style.height = height + "px";
+
+            var widthProgress = (width / 100 )  ;           //   Adjust based on max width
+            var heightProgress = (height / 100 ) ;          //   Adjust based on max height
+			var distanceProgress = (distance / 100 ) * 2 ;  //   Adjust based on max distance
+
+            document.getElementById("widthProgress").style.width = widthProgress + "%";
+            document.getElementById("heightProgress").style.width = heightProgress + "%";
+			
+			connection.send(widthProgress+","+heightProgress+","+distanceProgress);
+        }
+    </script>
+	
+	<script>
+        const widthInput = document.getElementById("widthInput");
+        widthInput.addEventListener("input", () => {
+            changeSize();
+        });
+
+        const heightInput = document.getElementById("heightInput");
+        heightInput.addEventListener("input", () => {
+            changeSize();
+        });
+		
+		const distanceInput = document.getElementById("distanceInput");
+        distanceInput.addEventListener("input", () => {
+            changeSize();
+        });
+
+        changeSize();
+    </script>
+	
+	
+    <video id="localVideo" autoplay muted></video>
+
+    
+</body>
+</html>
