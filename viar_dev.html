@@ -37,70 +37,73 @@
 
   <script>
     var peerDataID; // Declare the variable globally
+    var peerZ; // Declare the Peer object globally
 
     function getParameterByName(name, url) {
-        if (!url) url = window.location.href;
-        name = name.replace(/[\[\]]/g, "\\$&");
-        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        // Get PeerDesktopID from URL
-        const remotePeerId = getParameterByName('PeerDesktopID');
+      // Get PeerDesktopID from URL
+      const remotePeerId = getParameterByName('PeerDesktopID');
 
-        // Update iframe src with remotePeerId
-        if (remotePeerId) {
-            peerDataID = remotePeerId; // Set the global variable
-            const iframe = document.getElementById('myIframe_1');
-            const currentSrc = iframe.getAttribute('src');
-            const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-            iframe.setAttribute('src', newSrc);
+      // Update iframe src with remotePeerId
+      if (remotePeerId) {
+        peerDataID = remotePeerId; // Set the global variable
+        const iframe = document.getElementById('myIframe_1');
+        const currentSrc = iframe.getAttribute('src');
+        const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+        iframe.setAttribute('src', newSrc);
 
-            const iframeV = document.getElementById('myIframe_2');
-            const currentSrcV = iframeV.getAttribute('src');
-            const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-            iframeV.setAttribute('src', newSrcV);
-        }
-    });
+        const iframeV = document.getElementById('myIframe_2');
+        const currentSrcV = iframeV.getAttribute('src');
+        const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+        iframeV.setAttribute('src', newSrcV);
+      }
 
-    function updateBoxAttributes(tagID, newWidth, newHeight, newDistance) {
-        const boxElement = document.querySelector(tagID);
-        if (boxElement) {
-            boxElement.setAttribute('width', newWidth);
-            boxElement.setAttribute('height', newHeight);
-            boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
-        }
-    }
+      // Initialize WebRTC connection
+      peerZ = new Peer();
 
-    // This is message exchange to adjust settings
-    const peerZ = new Peer();
-
-    peerZ.on('open', (id) => {
+      peerZ.on('open', (id) => {
         console.log('My peer ID is: ' + id);
 
-        const connection = peerZ.connect(peerDataID);
+        if (peerDataID) {
+          const connection = peerZ.connect(peerDataID);
 
-        connection.on('open', () => {
+          connection.on('open', () => {
             console.log('Connected to remote peer.');
             connection.on('data', (data) => {
-                const parts = data.split(',');
-                const width = parseFloat(parts[0]);
-                const height = parseFloat(parts[1]);
-                const distance = parseFloat(parts[2]);
-                console.log("width -> " + width, "height -> " + height, "distance ->", distance);
-                
-                // Update both a-box and a-boxV
-                updateBoxAttributes('a-box', width, height, distance);
-                updateBoxAttributes('a-boxV', width, height, distance);
+              const parts = data.split(',');
+              const width = parseFloat(parts[0]);
+              const height = parseFloat(parts[1]);
+              const distance = parseFloat(parts[2]);
+              console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+
+              // Update both a-box and a-boxV
+              updateBoxAttributes('a-box', width, height, distance);
+              updateBoxAttributes('a-boxV', width, height, distance);
             });
 
             connection.send("I am connected to you and sending this message from mobile Z");
-        });
+          });
+        }
+      });
     });
+
+    function updateBoxAttributes(tagID, newWidth, newHeight, newDistance) {
+      const boxElement = document.querySelector(tagID);
+      if (boxElement) {
+        boxElement.setAttribute('width', newWidth);
+        boxElement.setAttribute('height', newHeight);
+        boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+      }
+    }
   </script>
 
 </head>
