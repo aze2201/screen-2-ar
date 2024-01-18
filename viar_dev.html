@@ -4,7 +4,35 @@
   <title>Multiple Iframes</title>
   <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <style>
-    /* Your existing styles */
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    h2 {
+      margin: 20px 0;
+    }
+
+    iframe {
+      width: 100%; /* Set iframe width to 100% */
+      height: 100%; /* Set iframe height to 100% */
+      border: none; /* Remove iframe border */
+      margin: 10px 0; /* Add some margin between iframes */
+    }
+
+    @media screen and (orientation: portrait) {
+      /* Adjust styles for portrait orientation if needed */
+    }
+
+    @media screen and (orientation: landscape) {
+      /* Adjust styles for landscape orientation if needed */
+    }
   </style>
 
   <script>
@@ -12,7 +40,13 @@
     var peerZ; // Declare the Peer object globally
 
     function getParameterByName(name, url) {
-      // ... (your existing code)
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -42,53 +76,29 @@
         if (peerDataID) {
           const connection = peerZ.connect(peerDataID);
 
+          const iframe1 = document.getElementById('myIframe_1');
+          const iframe2 = document.getElementById('myIframe_2');
+
+
           connection.on('open', () => {
             console.log('Connected to remote peer.');
+            connection.on('data', (data) => {
+              const parts = data.split(',');
+              const width = parseFloat(parts[0]);
+              const height = parseFloat(parts[1]);
+              const distance = parseFloat(parts[2]);
+              console.log("width -> " + width, "height -> " + height, "distance ->", distance);
 
-            // Wait for iframes to finish loading
-            const iframe1 = document.getElementById('myIframe_1');
-            const iframe2 = document.getElementById('myIframe_2');
+              // Update a-box
+              updateBoxAttributes('box', width, height, distance);
 
-            if (iframe1 && iframe2) {
-              iframe1.onload = iframe2.onload = function () {
-                // Once iframes are loaded, start processing data
-                connection.on('data', (data) => {
-                  console.log('Received data:', data);
+              // Update a-boxV
+              updateBoxAttributes('boxV', width, height, distance);
+            });
 
-                  const parts = data.split(',');
-                  const width = parseFloat(parts[0]);
-                  const height = parseFloat(parts[1]);
-                  const distance = parseFloat(parts[2]);
-                  console.log("width -> " + width, "height -> " + height, "distance ->", distance);
-
-                  // Update a-box
-                  updateBoxAttributes('box', width, height, distance);
-
-                  // Update a-boxV
-                  updateBoxAttributes('boxV', width, height, distance);
-                });
-
-                connection.send("I am connected to you and sending this message from mobile Z");
-              };
-            }
-          });
-
-          connection.on('data', (data) => {
-            console.log('Data received through the connection:', data);
-          });
-
-          connection.on('error', (error) => {
-            console.error('Connection error:', error);
-          });
-
-          connection.on('close', () => {
-            console.log('Connection closed.');
+            connection.send("I am connected to you and sending this message from mobile Z");
           });
         }
-      });
-
-      peerZ.on('error', (error) => {
-        console.error('PeerJS error:', error);
       });
     });
 
