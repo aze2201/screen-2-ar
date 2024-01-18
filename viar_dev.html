@@ -72,7 +72,7 @@
         if (boxElement) {
             boxElement.setAttribute('width', newWidth);
             boxElement.setAttribute('height', newHeight);
-            boxElement.setAttribute('position', "0 1.6 -" + newDistance);
+            boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
         }
     }
 
@@ -92,6 +92,8 @@
                 const height = parseFloat(parts[1]);
                 const distance = parseFloat(parts[2]);
                 console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+                
+                // Update both a-box and a-boxV
                 updateBoxAttributes('a-box', width, height, distance);
                 updateBoxAttributes('a-boxV', width, height, distance);
             });
