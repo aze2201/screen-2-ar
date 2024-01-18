@@ -36,8 +36,8 @@
   </style>
 
   <script>
-		var peerDataID;
-		// https://open-rtc.com/viar.html?PeerDesktopID=6087bfd9-f052-4dcc-8ef1-32da8a1c11c6
+    var peerDataID;
+    // https://open-rtc.com/viar.html?PeerDesktopID=6087bfd9-f052-4dcc-8ef1-32da8a1c11c6
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
             name = name.replace(/[\[\]]/g, "\\$&");
@@ -54,7 +54,7 @@
 
             // Update iframe src with remotePeerId
             if (remotePeerId) {
-				var peerDataID = remotePeerId ;
+        var peerDataID = remotePeerId ;
                 const iframe = document.getElementById('myIframe_1');
                 const currentSrc = iframe.getAttribute('src');
                 const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
@@ -71,21 +71,21 @@
 <body>
 
 <script>
-		
-	  function updateBoxAttributes(tagID,newWidth, newHeight, newDistance) {
+    
+    function updateBoxAttributes(tagID,newWidth, newHeight, newDistance) {
             //const boxElement = document.querySelector('a-box');
-			const boxElement = document.querySelector(tagID);
+      const boxElement = document.querySelector(tagID);
             if (boxElement) {
                 boxElement.setAttribute('width', newWidth);
                 boxElement.setAttribute('height', newHeight);
                 boxElement.setAttribute('position', "0 1.6 -"+newDistance);
             }
         } ;
-		
-		// This is message exchange to ajdust settings
-		const peer = new Peer();
-		
-        connection = peer.connect(peerDataID);
+    
+    // This is message exchange to ajdust settings
+    const peerZ = new Peer();
+    
+        connection = peerZ.connect(peerDataID);
         connection.on('open', () => {
             console.log('Connected to remote peer.');
             connection.on('data', (data) => {
@@ -95,11 +95,11 @@
                 distance = parseFloat(parts[2])
                 console.log("width -> "+width,"height -> "+height,"distance ->",distance);
                 updateBoxAttributes('a-box',width, height,distance);
-				updateBoxAttributes('a-boxV',width, height,distance);
+                updateBoxAttributes('a-boxV',width, height,distance);
             });
             
             connection.send("I am connected to you and sending this message from mobile");
-		});
+    });
 
 
 </script>
