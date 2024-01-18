@@ -78,9 +78,12 @@
         console.log('Parcaladim: ',getParameterByName('PeerDesktopID'))
 
         const theirVideo = document.getElementById('their-video');
+        const theirVideo_mirror = document.getElementById('their-video_mirror');
+
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then((stream) => {
                 theirVideo.srcObject = stream;
+                theirVideo_mirror.srcObject = stream;
 
           const call = peer.call(remotePeerId, stream);
         
@@ -104,6 +107,9 @@
                     // Display the remote stream in the their-video element
                     theirVideo.srcObject = remoteStream;
                     theirVideo.play();
+                    
+                    theirVideo_mirror.srcObject = remoteStream;
+                    theirVideo_mirror.play();
                 });
             })
             .catch((error) => {
