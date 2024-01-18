@@ -21,26 +21,28 @@
 </head>
 
 <body style="margin: 0; overflow: hidden;">
-    <a-scene id="myScene" vr-mode-ui="enabled: true;"
-             renderer="logarithmicDepthBuffer: true;"
-             embedded
-             arjs="trackingMethod: best;  debugUIEnabled: false;">        
-                <a-box id="box" look-at="[gps-camera] "src="#their-video" position="0 1.6 -5" width="3" height="3" depth="2" >
-                </a-box>
+<a-scene id="myScene" vr-mode-ui="enabled: true;"
+         renderer="logarithmicDepthBuffer: true;"
+         embedded
+         arjs="trackingMethod: best;  debugUIEnabled: false;">
 
-                <a-box id="box_mirrot" look-at="[gps-camera] "src="#their-video_mirror" position="0 1.6 -5" width="3" height="3" depth="2" >
-                </a-box>
-    </a-scene>
+    <!-- First a-box -->
+    <a-box id="box" look-at="[gps-camera]" src="#their-video" position="-1.5 1.6 -5" width="3" height="3" depth="2"></a-box>
 
+    <!-- Second a-box (positioned next to the first one) -->
+    <a-box id="box_mirrot" look-at="[gps-camera]" src="#their-video_mirror" position="1.5 1.6 -5" width="3" height="3" depth="2"></a-box>
 
-    <!-- Video area -->
-    <div class="pure-u-2-3" id="video-container">
-        <video id="their-video" width="2" height="2" autoplay></video>
-    </div>
+</a-scene>
 
-    <div class="pure-u-2-3" id="video-container_mirror">
-        <video id="their-video_mirror" width="2" height="2" autoplay></video>
-    </div>
+<!-- Video area -->
+<div class="pure-u-2-3" id="video-container">
+    <video id="their-video" width="2" height="2" autoplay></video>
+</div>
+
+<div class="pure-u-2-3" id="video-container_mirror">
+    <video id="their-video_mirror" width="2" height="2" autoplay></video>
+</div>
+
 
     <script>
         // Create a new Peer instance
