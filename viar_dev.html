@@ -72,7 +72,7 @@
 		
 		 function updateBoxAttributes(tagID,newWidth, newHeight, newDistance) {
             //const boxElement = document.querySelector('a-box');
-			const boxElement = document.querySelector('tagID');
+			const boxElement = document.querySelector(tagID);
             if (boxElement) {
                 boxElement.setAttribute('width', newWidth);
                 boxElement.setAttribute('height', newHeight);
@@ -92,8 +92,8 @@
                 height = parseFloat(parts[1])
                 distance = parseFloat(parts[2])
                 console.log("width -> "+width,"height -> "+height,"distance ->",distance);
-                updateBoxAttributes(a-box,width, height,distance);
-				updateBoxAttributes(a-boxV,width, height,distance);
+                updateBoxAttributes('a-box',width, height,distance);
+				updateBoxAttributes('a-boxV',width, height,distance);
             });
             
             connection.send("I am connected to you and sending this message from mobile");
