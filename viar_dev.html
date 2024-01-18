@@ -85,9 +85,11 @@
               const distance = parseFloat(parts[2]);
               console.log("width -> " + width, "height -> " + height, "distance ->", distance);
 
-              // Update both a-box and a-boxV
-              updateBoxAttributes('a-box', width, height, distance);
-              updateBoxAttributes('a-boxV', width, height, distance);
+              // Update a-box
+              updateBoxAttributes('box', width, height, distance);
+
+              // Update a-boxV
+              updateBoxAttributes('boxV', width, height, distance);
             });
 
             connection.send("I am connected to you and sending this message from mobile Z");
@@ -96,12 +98,15 @@
       });
     });
 
-    function updateBoxAttributes(tagID, newWidth, newHeight, newDistance) {
-      const boxElement = document.querySelector(tagID);
+    function updateBoxAttributes(id, newWidth, newHeight, newDistance) {
+      const boxElement = document.querySelector(`#${id}`);
       if (boxElement) {
+        console.log(`Updating ${id}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
         boxElement.setAttribute('width', newWidth);
         boxElement.setAttribute('height', newHeight);
         boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+      } else {
+        console.log(`Element with ID ${id} not found.`);
       }
     }
   </script>
