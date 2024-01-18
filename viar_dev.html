@@ -79,25 +79,27 @@
           const iframe1 = document.getElementById('myIframe_1');
           const iframe2 = document.getElementById('myIframe_2');
 
+          // Wait for iframes to finish loading
+          iframe1.onload = iframe2.onload = function () {
+            connection.on('open', () => {
+              console.log('Connected to remote peer.');
+              connection.on('data', (data) => {
+                const parts = data.split(',');
+                const width = parseFloat(parts[0]);
+                const height = parseFloat(parts[1]);
+                const distance = parseFloat(parts[2]);
+                console.log("width -> " + width, "height -> " + height, "distance ->", distance);
 
-          connection.on('open', () => {
-            console.log('Connected to remote peer.');
-            connection.on('data', (data) => {
-              const parts = data.split(',');
-              const width = parseFloat(parts[0]);
-              const height = parseFloat(parts[1]);
-              const distance = parseFloat(parts[2]);
-              console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+                // Update a-box
+                updateBoxAttributes('box', width, height, distance);
 
-              // Update a-box
-              updateBoxAttributes('box', width, height, distance);
+                // Update a-boxV
+                updateBoxAttributes('boxV', width, height, distance);
+              });
 
-              // Update a-boxV
-              updateBoxAttributes('boxV', width, height, distance);
+              connection.send("I am connected to you and sending this message from mobile Z");
             });
-
-            connection.send("I am connected to you and sending this message from mobile Z");
-          });
+          };
         }
       });
     });
