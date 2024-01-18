@@ -36,6 +36,17 @@
     </div>
 
     <script>
+        // Create a new Peer instance
+        
+        function updateBoxAttributes(newWidth, newHeight, newDistance) {
+            const boxElement = document.querySelector('a-box');
+            if (boxElement) {
+                boxElement.setAttribute('width', newWidth);
+                boxElement.setAttribute('height', newHeight);
+                boxElement.setAttribute('position', "0 1.6 -"+newDistance);
+            }
+        }
+        
         const peer = new Peer();
 
         peer.on('open', (peerId) => {
@@ -63,24 +74,11 @@
         navigator.mediaDevices.getUserMedia({ video: true, audio: true })
             .then((stream) => {
                 theirVideo.srcObject = stream;
-	
 
-
-			
-	  function updateBoxAttributes(tagID,newWidth, newHeight, newDistance) {
-            //const boxElement = document.querySelector('a-box');
-	    const boxElement = document.querySelector(tagID);
-            if (boxElement) {
-                boxElement.setAttribute('width', newWidth);
-                boxElement.setAttribute('height', newHeight);
-                boxElement.setAttribute('position', "0 1.6 -"+newDistance);
-            }
-        } ;
-		
-		// This is message exchange to ajdust settings
-		const peer = new Peer();
-		
-        connection = peer.connect(remotePeerID);
+          const call = peer.call(remotePeerId, stream);
+        
+        // This is message exchange to ajdust settings
+        connection = peer.connect(remotePeerId);
         connection.on('open', () => {
             console.log('Connected to remote peer.');
             connection.on('data', (data) => {
@@ -89,21 +87,11 @@
                 height = parseFloat(parts[1])
                 distance = parseFloat(parts[2])
                 console.log("width -> "+width,"height -> "+height,"distance ->",distance);
-                updateBoxAttributes('a-box',width, height,distance);
-		updateBoxAttributes('a-boxV',width, height,distance);
+                updateBoxAttributes(width, height,distance);
             });
             
             connection.send("I am connected to you and sending this message from mobile");
-		});
-
-
-
-
-
-
-
-          const call = peer.call(remotePeerId, stream);
-        
+        });
 
                 call.on('stream', (remoteStream) => {
                     // Display the remote stream in the their-video element
