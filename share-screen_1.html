@@ -77,21 +77,6 @@
 
           const call = peer.call(remotePeerId, stream);
         
-        // This is message exchange to ajdust settings
-        connection = peer.connect(remotePeerId);
-        connection.on('open', () => {
-            console.log('Connected to remote peer.');
-            connection.on('data', (data) => {
-                const parts = data.split(',');
-                width = parseFloat(parts[0])
-                height = parseFloat(parts[1])
-                distance = parseFloat(parts[2])
-                console.log("width -> "+width,"height -> "+height,"distance ->",distance);
-                updateBoxAttributes(width, height,distance);
-            });
-            
-            connection.send("I am connected to you and sending this message from mobile");
-        });
 
                 call.on('stream', (remoteStream) => {
                     // Display the remote stream in the their-video element
