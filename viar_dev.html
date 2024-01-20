@@ -105,7 +105,7 @@
     });
 
     function updateBoxAttributes(ayframe, boxId, newWidth, newHeight, newDistance) {
-      const boxElement = document.querySelector(document.querySelector(ayframe).contentWindow.document.querySelector(boxId));
+      const boxElement = document.querySelector(ayframe).contentWindow.document.querySelector(boxId);
       if (boxElement) {
         console.log(`Updating ${boxId}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
         boxElement.setAttribute('width', newWidth);
