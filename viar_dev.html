@@ -113,9 +113,9 @@
         if (boxElement) {
           console.log(`Updating ${boxId}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
           // Perform the update on the boxElement
-          // Example: boxElement.setAttribute('width', newWidth);
-          //          boxElement.setAttribute('height', newHeight);
-          //          boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+          boxElement.setAttribute('width', newWidth);
+          boxElement.setAttribute('height', newHeight);
+          boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
         } else {
           console.log(`Element with ID inside ${boxId} not found.`);
         }
