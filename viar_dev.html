@@ -80,6 +80,7 @@
           connection.on('open', () => {
             console.log('Connected to remote peer.');
             connection.on('data', (data) => {
+              if (data) {
               const parts = data.split(',');
               const width = parseFloat(parts[0]);
               const height = parseFloat(parts[1]);
@@ -93,7 +94,8 @@
               updateBoxAttributes('myIframe_2','boxV', width, height, distance);
 
               connection.send("trying to change size V");
-            });
+            }
+          });
 
             connection.send("I am connected to you and sending this message from mobile Z");
           });
