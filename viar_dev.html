@@ -91,10 +91,10 @@
                 console.log("width -> " + width, "height -> " + height, "distance ->", distance);
 
                 // Update a-box
-                updateBoxAttributes('box', width, height, distance);
+                updateBoxAttributes('myIframe_1','box', width, height, distance);
 
                 // Update a-boxV
-                updateBoxAttributes('boxV', width, height, distance);
+                updateBoxAttributes('myIframe_2','boxV', width, height, distance);
               });
 
               connection.send("I am connected to you and sending this message from mobile Z");
@@ -104,11 +104,11 @@
       });
     });
 
-    function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
-      const iframe = document.getElementById(boxId);
+    function updateBoxAttributes(ayframe,boxId, newWidth, newHeight, newDistance) {
+      const iframe = document.getElementById(ayframe);
       if (iframe) {
         const iframeContent = iframe.contentDocument || iframe.contentWindow.document;
-        const boxElement = iframeContent.getElementById('boxId'); // Replace 'boxId' with the actual ID of the element inside the iframe
+        const boxElement = iframeContent.getElementById(boxId); // Replace 'boxId' with the actual ID of the element inside the iframe
 
         if (boxElement) {
           console.log(`Updating ${boxId}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
