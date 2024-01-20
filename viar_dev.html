@@ -38,6 +38,7 @@
   <script>
     var peerDataID; // Declare the variable globally
     var peerZ; // Declare the Peer object globally
+    var iframesLoaded = false; // Flag to track if iframes have been loaded
 
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;
@@ -59,48 +60,62 @@
         const iframe1 = document.getElementById('myIframe_1');
         const iframe2 = document.getElementById('myIframe_2');
 
-        // Wait for iframes to finish loading
-        iframe1.onload = iframe2.onload = function () {
-          const currentSrc1 = iframe1.getAttribute('src');
-          const newSrc1 = currentSrc1 + (currentSrc1.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-          iframe1.setAttribute('src', newSrc1);
+        // Check if iframes have already been loaded
+        if (!iframesLoaded) {
+          // Wait for iframes to finish loading
+          iframe1.onload = iframe2.onload = function () {
+            const currentSrc1 = iframe1.getAttribute('src');
+            const newSrc1 = currentSrc1 + (currentSrc1.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+            iframe1.setAttribute('src', newSrc1);
 
-          const currentSrc2 = iframe2.getAttribute('src');
-          const newSrc2 = currentSrc2 + (currentSrc2.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-          iframe2.setAttribute('src', newSrc2);
+            const currentSrc2 = iframe2.getAttribute('src');
+            const newSrc2 = currentSrc2 + (currentSrc2.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+            iframe2.setAttribute('src', newSrc2);
 
-          // Initialize WebRTC connection after updating iframe src
-          peerZ = new Peer();
+            // Set the flag to true to avoid reloading iframes again
+            iframesLoaded = true;
 
-          peerZ.on('open', (id) => {
-            console.log('My peer ID is: ' + id);
-
-            if (peerDataID) {
-              const connection = peerZ.connect(peerDataID);
-
-              connection.on('open', () => {
-                console.log('Connected to remote peer.');
-                connection.on('data', (data) => {
-                  const parts = data.split(',');
-                  const width = parseFloat(parts[0]);
-                  const height = parseFloat(parts[1]);
-                  const distance = parseFloat(parts[2]);
-                  console.log("width -> " + width, "height -> " + height, "distance ->", distance);
-
-                  // Update a-box
-                  updateBoxAttributes('box', width, height, distance);
-
-                  // Update a-boxV
-                  updateBoxAttributes('boxV', width, height, distance);
-                });
-
-                connection.send("I am connected to you and sending this message from mobile Z");
-              });
-            }
-          });
-        };
+            // Initialize WebRTC connection after updating iframe src
+            initializeWebRTC();
+          };
+        } else {
+          // If iframes have already been loaded, just initialize WebRTC connection
+          initializeWebRTC();
+        }
       }
     });
+
+    function initializeWebRTC() {
+      // Initialize WebRTC connection
+      peerZ = new Peer();
+
+      peerZ.on('open', (id) => {
+        console.log('My peer ID is: ' + id);
+
+        if (peerDataID) {
+          const connection = peerZ.connect(peerDataID);
+
+          connection.on('open', () => {
+            console.log('Connected to remote peer.');
+            connection.on('data', (data) => {
+              const parts = data.split(',');
+              const width = parseFloat(parts[0]);
+              const height = parseFloat(parts[1]);
+              const distance = parseFloat(parts[2]);
+              console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+
+              // Update a-box
+              updateBoxAttributes('box', width, height, distance);
+
+              // Update a-boxV
+              updateBoxAttributes('boxV', width, height, distance);
+            });
+
+            connection.send("I am connected to you and sending this message from mobile Z");
+          });
+        }
+      }
+    }
 
     function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
       const boxElement = document.querySelector(`#${boxId}`);
