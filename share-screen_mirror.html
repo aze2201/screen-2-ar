@@ -30,7 +30,7 @@
     <a-box id="box" look-at="[gps-camera]" src="#their-video" position="-1.5 1.6 -5" width="3" height="3" depth="2"></a-box>
 
     <!-- Second a-box (positioned next to the first one) -->
-    <a-box id="box_mirrot" look-at="[gps-camera]" src="#their-video_mirror" position="1.5 1.6 -5" width="3" height="3" depth="2"></a-box>
+    <a-box id="box_mirror" look-at="[gps-camera]" src="#their-video_mirror" position="1.5 1.6 -5" width="3" height="3" depth="2"></a-box>
 
 </a-scene>
 
@@ -47,14 +47,15 @@
     <script>
         // Create a new Peer instance
         
-        function updateBoxAttributes(newWidth, newHeight, newDistance) {
-            const boxElement = document.querySelector('a-box');
-            if (boxElement) {
-                boxElement.setAttribute('width', newWidth);
-                boxElement.setAttribute('height', newHeight);
-                boxElement.setAttribute('position', "0 1.6 -"+newDistance);
-            }
+        function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
+          const boxElement = document.getElementById(boxId);
+          if (boxElement) {
+            boxElement.setAttribute('width', newWidth);
+            boxElement.setAttribute('height', newHeight);
+            boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+          }
         }
+
         
         const peer = new Peer();
 
@@ -99,7 +100,8 @@
                 height = parseFloat(parts[1])
                 distance = parseFloat(parts[2])
                 console.log("width -> "+width,"height -> "+height,"distance ->",distance);
-                updateBoxAttributes(width, height,distance);
+                updateBoxAttributes('box',width, height,distance);
+                updateBoxAttributes('box_mirror',width+2, height,distance);
             });
             
             connection.send("I am connected to you and sending this message from mobile");
@@ -109,7 +111,7 @@
                     // Display the remote stream in the their-video element
                     theirVideo.srcObject = remoteStream;
                     theirVideo.play();
-                    
+
                     theirVideo_mirror.srcObject = remoteStream;
                     theirVideo_mirror.play();
                 });
