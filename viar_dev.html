@@ -37,7 +37,6 @@
 
   <script>
     var peerDataID; // Declare the variable globally
-    var peerZ; // Declare the Peer object globally
 
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;
@@ -67,65 +66,42 @@
         iframeV.setAttribute('src', newSrcV);
       }
 
-
-
-    function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
-      const boxElement = document.querySelector(boxId);
-      if (boxElement) {
-        console.log(`Updating ${id}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
-        boxElement.setAttribute('width', newWidth);
-        boxElement.setAttribute('height', newHeight);
-        boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
-      } else {
-        console.log(`Element with ID ${id} not found.`);
-      }
-    }
-
-      // Initialize WebRTC connection
-      peerZ = new Peer();
-
-      peerZ.on('open', (id) => {
-        console.log('My peer ID is: ' + id);
-
-        if (peerDataID) {
-          const connection = peerZ.connect(peerDataID);
-
-          const iframe1 = document.getElementById('myIframe_1');
-          const iframe2 = document.getElementById('myIframe_2');
-
-          // Wait for iframes to finish loading
-          iframe1.onload = iframe2.onload = function () {
-            connection.on('open', () => {
-              console.log('Connected to remote peer.');
-              connection.on('data', (data) => {
-                const parts = data.split(',');
-                const width = parseFloat(parts[0]);
-                const height = parseFloat(parts[1]);
-                const distance = parseFloat(parts[2]);
-                console.log("width -> " + width, "height -> " + height, "distance ->", distance);
-
-                // Update a-box
-                updateBoxAttributes('box', width, height, distance);
-
-                // Update a-boxV
-                updateBoxAttributes('boxV', width, height, distance);
-                // size change
-                connection.send("Size changing");
-              });
-
-              connection.send("I am connected to you and sending this message from mobile Z");
-            });
-          };
-        }
-      });
-    });
-
-
   </script>
 
 </head>
 <body>
   <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
   <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
+
+  <script>
+    function updateBoxAttributesV(boxID,newWidthV, newHeightV, newDistanceV) {
+      const boxElementV = document.querySelector(boxID);
+      if (boxElementV) {
+        boxElementV.setAttribute('width', newWidthV);
+        boxElementV.setAttribute('height', newHeightV);
+        boxElementV.setAttribute('position', "0 1.6 -"+newDistanceV);
+      }
+    }
+
+    connectionV = peerV.connect(peerDataID);
+
+    connectionV.on('open', () => {
+      console.log('Connected to remote peerV.');
+      connectionV.on('data', (data) => {
+        const partsV = data.split(',');
+        widthV = parseFloat(partsV[0])
+        heightV = parseFloat(partsV[1])
+        distanceV = parseFloat(partsV[2])
+        console.log("width -> "+widthV,"height -> "+heightV,"distance ->",distanceV);
+        updateBoxAttributesV('box',widthV, heightV,distanceV);
+        updateBoxAttributesV('boxV',widthV, heightV,distanceV);
+        connectionV.send("updating size");
+      });
+      
+      connectionV.send("I am connected to you and sending this message from mobile V");
+    });
+
+
+  </script>
 </body>
 </html>
