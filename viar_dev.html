@@ -73,11 +73,10 @@
         boxElementV.setAttribute('height', newHeightV);
         boxElementV.setAttribute('position', "0 1.6 -"+newDistanceV);
       }
-    }
 
-    connectionV = peerV.connect(peerDataID);
+      connectionV = peerV.connect(peerDataID);
 
-    connectionV.on('open', () => {
+      connectionV.on('open', () => {
       console.log('Connected to remote peerV.');
       connectionV.on('data', (data) => {
         const partsV = data.split(',');
@@ -88,10 +87,14 @@
         updateBoxAttributesV('box',widthV, heightV,distanceV);
         updateBoxAttributesV('boxV',widthV, heightV,distanceV);
         connectionV.send("updating size");
-      });
-      
+      });   
       connectionV.send("I am connected to you and sending this message from mobile V");
     });
+
+
+    }
+
+    
 
   </script>
 
