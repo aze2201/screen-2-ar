@@ -56,52 +56,50 @@
       // Update iframe src with remotePeerId
       if (remotePeerId) {
         peerDataID = remotePeerId; // Set the global variable
-        const iframe = document.getElementById('myIframe_1');
-        const currentSrc = iframe.getAttribute('src');
-        const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-        iframe.setAttribute('src', newSrc);
+        const iframe1 = document.getElementById('myIframe_1');
+        const iframe2 = document.getElementById('myIframe_2');
 
-        const iframeV = document.getElementById('myIframe_2');
-        const currentSrcV = iframeV.getAttribute('src');
-        const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-        iframeV.setAttribute('src', newSrcV);
-      }
+        // Wait for iframes to finish loading
+        iframe1.onload = iframe2.onload = function () {
+          const currentSrc1 = iframe1.getAttribute('src');
+          const newSrc1 = currentSrc1 + (currentSrc1.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+          iframe1.setAttribute('src', newSrc1);
 
-      // Initialize WebRTC connection
-      peerZ = new Peer();
+          const currentSrc2 = iframe2.getAttribute('src');
+          const newSrc2 = currentSrc2 + (currentSrc2.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+          iframe2.setAttribute('src', newSrc2);
 
-      peerZ.on('open', (id) => {
-        console.log('My peer ID is: ' + id);
+          // Initialize WebRTC connection after updating iframe src
+          peerZ = new Peer();
 
-        if (peerDataID) {
-          const connection = peerZ.connect(peerDataID);
+          peerZ.on('open', (id) => {
+            console.log('My peer ID is: ' + id);
 
-          const iframe1 = document.getElementById('myIframe_1');
-          const iframe2 = document.getElementById('myIframe_2');
+            if (peerDataID) {
+              const connection = peerZ.connect(peerDataID);
 
-          // Wait for iframes to finish loading
-          iframe1.onload = iframe2.onload = function () {
-            connection.on('open', () => {
-              console.log('Connected to remote peer.');
-              connection.on('data', (data) => {
-                const parts = data.split(',');
-                const width = parseFloat(parts[0]);
-                const height = parseFloat(parts[1]);
-                const distance = parseFloat(parts[2]);
-                console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+              connection.on('open', () => {
+                console.log('Connected to remote peer.');
+                connection.on('data', (data) => {
+                  const parts = data.split(',');
+                  const width = parseFloat(parts[0]);
+                  const height = parseFloat(parts[1]);
+                  const distance = parseFloat(parts[2]);
+                  console.log("width -> " + width, "height -> " + height, "distance ->", distance);
 
-                // Update a-box
-                updateBoxAttributes('box', width, height, distance);
+                  // Update a-box
+                  updateBoxAttributes('box', width, height, distance);
 
-                // Update a-boxV
-                updateBoxAttributes('boxV', width, height, distance);
+                  // Update a-boxV
+                  updateBoxAttributes('boxV', width, height, distance);
+                });
+
+                connection.send("I am connected to you and sending this message from mobile Z");
               });
-
-              connection.send("I am connected to you and sending this message from mobile Z");
-            });
-          };
-        }
-      });
+            }
+          });
+        };
+      }
     });
 
     function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
@@ -123,3 +121,4 @@
   <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
 </body>
 </html>
+
