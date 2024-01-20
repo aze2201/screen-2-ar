@@ -36,25 +36,11 @@
     </div>
 
     <script>
-        // Create a new Peer instance
-        
-        function updateBoxAttributes(newWidth, newHeight, newDistance) {
-            const boxElement = document.querySelector('a-box');
-            if (boxElement) {
-                boxElement.setAttribute('width', newWidth);
-                boxElement.setAttribute('height', newHeight);
-                boxElement.setAttribute('position', "0 1.6 -"+newDistance);
-            }
-        }
-        
         const peer = new Peer();
-
         peer.on('open', (peerId) => {
             console.log('My peer ID is: ' + peerId);
         });
 
-        // Connect to the remote peer
-        //const remotePeerId = '{{ PeerDesktopID  }}'; 
         // Function to get URL parameters
         function getParameterByName(name, url) {
             if (!url) url = window.location.href;
@@ -75,8 +61,7 @@
             .then((stream) => {
                 theirVideo.srcObject = stream;
 
-          const call = peer.call(remotePeerId, stream);
-        
+          	const call = peer.call(remotePeerId, stream);
 
                 call.on('stream', (remoteStream) => {
                     // Display the remote stream in the their-video element
