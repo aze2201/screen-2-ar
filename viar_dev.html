@@ -66,15 +66,7 @@
         iframeV.setAttribute('src', newSrcV);
       }
 
-  </script>
-
-</head>
-<body>
-  <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
-  <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
-
-  <script>
-    function updateBoxAttributesV(boxID,newWidthV, newHeightV, newDistanceV) {
+      function updateBoxAttributesV(boxID,newWidthV, newHeightV, newDistanceV) {
       const boxElementV = document.querySelector(boxID);
       if (boxElementV) {
         boxElementV.setAttribute('width', newWidthV);
@@ -101,7 +93,11 @@
       connectionV.send("I am connected to you and sending this message from mobile V");
     });
 
-
   </script>
+
+</head>
+<body>
+  <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
+  <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
 </body>
 </html>
