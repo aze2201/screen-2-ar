@@ -67,6 +67,20 @@
         iframeV.setAttribute('src', newSrcV);
       }
 
+
+
+    function updateBoxAttributes(boxId, newWidth, newHeight, newDistance) {
+      const boxElement = document.querySelector(boxId);
+      if (boxElement) {
+        console.log(`Updating ${id}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
+        boxElement.setAttribute('width', newWidth);
+        boxElement.setAttribute('height', newHeight);
+        boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+      } else {
+        console.log(`Element with ID ${id} not found.`);
+      }
+    }
+
       // Initialize WebRTC connection
       peerZ = new Peer();
 
@@ -104,24 +118,12 @@
       });
     });
 
-    function updateBoxAttributes(id, newWidth, newHeight, newDistance) {
-      const boxElement = document.querySelector(`#${id}`);
-      if (boxElement) {
-        console.log(`Updating ${id}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
-        boxElement.setAttribute('width', newWidth);
-        boxElement.setAttribute('height', newHeight);
-        boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
-      } else {
-        console.log(`Element with ID ${id} not found.`);
-      }
-    }
+
   </script>
 
 </head>
 <body>
-  <h2>Two Iframes Loading the Same Page</h2>
   <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
   <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
 </body>
 </html>
-
