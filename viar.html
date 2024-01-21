@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Multiple Iframes</title>
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <style>
     body, html {
       margin: 0;
@@ -18,7 +19,7 @@
       margin: 20px 0;
     }
 
-   iframe {
+    iframe {
       width: 100%; /* Set iframe width to 100% */
       height: 100%; /* Set iframe height to 100% */
       border: none; /* Remove iframe border */
@@ -34,40 +35,11 @@
     }
   </style>
 
-  <script>
-    // https://open-rtc.com/viar.html?PeerDesktopID=6087bfd9-f052-4dcc-8ef1-32da8a1c11c6
-        function getParameterByName(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            // Get PeerDesktopID from URL
-            const remotePeerId = getParameterByName('PeerDesktopID');
-
-            // Update iframe src with remotePeerId
-            if (remotePeerId) {
-                const iframe = document.getElementById('myIframe');
-                const currentSrc = iframe.getAttribute('src');
-                const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-                iframe.setAttribute('src', newSrc);
-                const iframeV = document.getElementById('myIframeV');
-                const currentSrcV = iframeV.getAttribute('src');
-                const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
-                iframeV.setAttribute('src', newSrcV);
-            }
-        });
-    </script>
+<script src="https://open-rtc.com/js/viar_dev.min.js"></script>
 
 </head>
 <body>
-  <h2>Two Iframes Loading the Same Page</h2>
-  <iframe id="myIframe" src="https://open-rtc.com/share-screen.html"></iframe>
-  <iframe id="myIframeV" src="https://open-rtc.com/share-screenV.html"></iframe>
+  <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
+  <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
 </body>
 </html>

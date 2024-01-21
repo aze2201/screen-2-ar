@@ -43,8 +43,8 @@
         #qrcode {
             margin-top: 20px;
         }
-		
-		#changeable-element {
+    
+    #changeable-element {
             width: 100px;
             height: 100px;
             background-color: lightblue;
@@ -71,11 +71,11 @@
     <center><h2>This is your display ID. <br>Scan this QR code with your camera and connect to this display</h2></center>
     <button id="startButton">Start Sharing Display</button>
     <div id="qrcode"></div>
-	
-	<br>
-	
-	<center><h2>Adjust your Argumented Object<br> This size will effect on your mobile browser interface<br>(NOT WORKING FOR VR MODE YET)<h2></center>
-	<div id="changeable-element"></div>
+  
+  <br>
+  
+  <center><h2>Adjust your Argumented Object<br> This size will effect on your mobile browser interface<br>(NOT WORKING FOR VR MODE YET)<h2></center>
+  <div id="changeable-element"></div>
     <div id="size-controls">
         <label for="widthInput">Width:</label>
         <input type="range" id="widthInput" min="100" max="500" value="200" step="1">
@@ -90,8 +90,8 @@
             <div id="heightProgress" class="progress"></div>
         </div>
     </div>
-	
-	<div id="size-controls">
+  
+  <div id="size-controls">
         <label for="distanceInput">Distance:</label>
         <input type="range" id="distanceInput" min="100" max="500" value="200" step="1">
         <div class="progress-bar">
@@ -99,9 +99,15 @@
         </div>
     </div>
 
-	
-	<script>
-		// This is communication
+
+  
+
+    <center><h2><br>Scan this QR for mobile VR mode</h2></center>
+    <div id="qrcodeV"></div>
+    <center id="myCenter"><h2>Link to VR mode<br></h2></center>
+  
+  <script>
+    // This is communication
         const startButton = document.getElementById('startButton');
         const localVideo = document.getElementById('localVideo');
         let peer = null;
@@ -115,32 +121,48 @@
                     console.log('Sender PeerID:', peerId);
                     
                     const qrcodeDiv = document.getElementById('qrcode');
-                    const text = 'https://open-rtc.com/share-screen.html?PeerDesktopID='+peerId;
+                    const qrcodeDivV = document.getElementById('qrcodeV');
 
+                    const text = 'https://open-rtc.com/screen_frame.html?PeerDesktopID='+peerId;
+
+                    const textV = 'https://open-rtc.com/viar_dev.html?PeerDesktopID='+peerId;
+
+                    const linkElement = document.createElement('a');
+                    linkElement.href = `https://open-rtc.com/viar_dev.html?PeerDesktopID=${peerId}`;
+                    const centerElement = document.getElementById('myCenter');
+                    linkElement.textContent = 'Link';
+                    centerElement.appendChild(linkElement);
                     
                     if (text) {
                         // Clear existing QR code
                         qrcodeDiv.innerHTML = '';
+                        qrcodeDivV.innerHTML = '';
                         // Generate QR code
                         const qrcode = new QRCode(qrcodeDiv, {
                               text: text,
                               width: 256,
                               height: 256
                          });
+                         const qrcodeV = new QRCode(qrcodeDivV, {
+                              text: textV,
+                              width: 256,
+                              height: 256
+                         });
 
                     qrcodeDiv.style.display = 'block';
+                    qrcodeDivV.style.display = 'block';
                     
                      }
                 });
-				
-		// This is message exchange to adjust settings				
-		peer.on('connection', (conn) => {
-			connection = conn;
-			connection.on('data', (data) => {
-				console.log(data);
-				connection.send("2,2,4");
-			});
-		});
+        
+    // This is message exchange to adjust settings        
+    peer.on('connection', (conn) => {
+      connection = conn;
+      connection.on('data', (data) => {
+        console.log(data);
+        //connection.send("2,2,4");
+      });
+    });
                 
                 
 
@@ -171,11 +193,11 @@
             }
         });
 
-		// This is display
+    // This is display
         function changeSize() {
             var width = document.getElementById("widthInput").value;
             var height = document.getElementById("heightInput").value;
-			var distance = document.getElementById("distanceInput").value;
+            var distance = document.getElementById("distanceInput").value;
 
             var element = document.getElementById("changeable-element");
             element.style.width = width + "px";
@@ -183,16 +205,16 @@
 
             var widthProgress = (width / 100 )  ;           //   Adjust based on max width
             var heightProgress = (height / 100 ) ;          //   Adjust based on max height
-			var distanceProgress = (distance / 100 ) * 2 ;  //   Adjust based on max distance
+            var distanceProgress = (distance / 100 ) * 2 ;  //   Adjust based on max distance
 
             document.getElementById("widthProgress").style.width = widthProgress + "%";
             document.getElementById("heightProgress").style.width = heightProgress + "%";
-			
-			connection.send(widthProgress+","+heightProgress+","+distanceProgress);
+      
+            connection.send(widthProgress+","+heightProgress+","+distanceProgress);
         }
     </script>
-	
-	<script>
+  
+  <script>
         const widthInput = document.getElementById("widthInput");
         widthInput.addEventListener("input", () => {
             changeSize();
@@ -202,16 +224,16 @@
         heightInput.addEventListener("input", () => {
             changeSize();
         });
-		
-		const distanceInput = document.getElementById("distanceInput");
+    
+    const distanceInput = document.getElementById("distanceInput");
         distanceInput.addEventListener("input", () => {
             changeSize();
         });
 
         changeSize();
     </script>
-	
-	
+  
+  
     <video id="localVideo" autoplay muted></video>
 
     
