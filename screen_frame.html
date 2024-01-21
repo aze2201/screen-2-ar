@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Multiple Iframes</title>
   <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <style>
     body, html {
@@ -12,6 +13,10 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+    }
+
+    h2 {
+      margin: 20px 0;
     }
 
     iframe {
@@ -31,6 +36,8 @@
   </style>
 
   <script>
+    var peerDataID; // Declare the variable globally
+    var peerZ; // Declare the Peer object globally
 
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;
@@ -48,16 +55,78 @@
 
       // Update iframe src with remotePeerId
       if (remotePeerId) {
+        peerDataID = remotePeerId; // Set the global variable
         const iframe = document.getElementById('myIframe_1');
         const currentSrc = iframe.getAttribute('src');
         const newSrc = currentSrc + (currentSrc.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
         iframe.setAttribute('src', newSrc);
+
+        const iframeV = document.getElementById('myIframe_2');
+        const currentSrcV = iframeV.getAttribute('src');
+        const newSrcV = currentSrcV + (currentSrcV.includes('?') ? '&' : '?') + 'PeerDesktopID=' + remotePeerId;
+        iframeV.setAttribute('src', newSrcV);
       }
 
+      // Initialize WebRTC connection
+      peerZ = new Peer();
+
+      peerZ.on('open', (id) => {
+        console.log('My peer ID is: ' + id);
+
+        if (peerDataID) {
+          const connection = peerZ.connect(peerDataID);
+
+
+          connection.on('open', () => {
+            console.log('Connected to remote peer.');
+            connection.on('data', (data) => {
+              if (data) {
+              const parts = data.split(',');
+              const width = parseFloat(parts[0]);
+              const height = parseFloat(parts[1]);
+              const distance = parseFloat(parts[2]);
+              console.log("width -> " + width, "height -> " + height, "distance ->", distance);
+
+              // Update a-box
+              updateBoxAttributes('myIframe_1','box', width, height, distance);
+
+              // Update a-boxV
+              updateBoxAttributes('myIframe_2','boxV', width, height, distance);
+
+              connection.send("trying to change size V");
+            }
+          });
+
+            connection.send("I am connected to you and sending this message from mobile Z");
+          });
+        }
+      });
+    });
+
+    function updateBoxAttributes(ayframe,boxId, newWidth, newHeight, newDistance) {
+      const iframe = document.getElementById(ayframe);
+      if (iframe) {
+        const iframeContent = iframe.contentDocument || iframe.contentWindow.document;
+        const boxElement = iframeContent.getElementById(boxId); // Replace 'boxId' with the actual ID of the element inside the iframe
+
+        if (boxElement) {
+          console.log(`Updating ${boxId}: width=${newWidth}, height=${newHeight}, distance=${newDistance}`);
+          // Perform the update on the boxElement
+          boxElement.setAttribute('width', newWidth);
+          boxElement.setAttribute('height', newHeight);
+          boxElement.setAttribute('position', `0 1.6 -${newDistance}`);
+        } else {
+          console.log(`Element with ID inside ${boxId} not found.`);
+        }
+      } else {
+        console.log(`Iframe with ID ${boxId} not found.`);
+      }
+    }
   </script>
 
 </head>
 <body>
-  <iframe id="myIframe_1" src="https://open-rtc.com/share-screen.html"></iframe>
+  <iframe id="myIframe_1" src="https://open-rtc.com/share-screen_1.html"></iframe>
+  <iframe id="myIframe_2" src="https://open-rtc.com/share-screen_2.html"></iframe>
 </body>
 </html>
