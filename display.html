@@ -123,12 +123,12 @@
                     const qrcodeDiv = document.getElementById('qrcode');
                     const qrcodeDivV = document.getElementById('qrcodeV');
 
-                    const text = 'https://open-rtc.com/screen_frame.html?PeerDesktopID='+peerId;
+                    const text = 'https://open-rtc.com/pages/screen_frame.html?PeerDesktopID='+peerId;
 
-                    const textV = 'https://open-rtc.com/viar_dev.html?PeerDesktopID='+peerId;
+                    const textV = 'https://open-rtc.com/pages/viar_dev.html?PeerDesktopID='+peerId;
 
                     const linkElement = document.createElement('a');
-                    linkElement.href = `https://open-rtc.com/viar_dev.html?PeerDesktopID=${peerId}`;
+                    linkElement.href = `https://open-rtc.com/pages/viar_dev.html?PeerDesktopID=${peerId}`;
                     const centerElement = document.getElementById('myCenter');
                     linkElement.textContent = 'Link';
                     centerElement.appendChild(linkElement);
