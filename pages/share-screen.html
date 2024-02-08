@@ -17,7 +17,23 @@
 <!-- https://open-rtc.com/share-screen_dev.html?PeerDesktopID=6ef10dfe-fd1a-4258-999e-d6f2c6258f0f
 -->
 
+<style>
+    #video-container {
+      position: relative;
+      width: 640px; /* Adjust the size as needed */
+      height: 360px; /* Adjust the size as needed */
+    }
 
+    #transparent-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5); /* Adjust the alpha value for transparency */
+    }
+  </style>
+    
 </head>
 
 <body style="margin: 0; overflow: hidden;">
@@ -33,7 +49,9 @@
     <!-- Video area -->
     <div class="pure-u-2-3" id="video-container">
         <video id="their-video" width="2" height="2" autoplay></video>
+         <div id="transparent-overlay"></div>
     </div>
+        
 
     <script>
         // Create a new Peer instance
